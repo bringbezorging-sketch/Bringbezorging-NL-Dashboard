@@ -108,6 +108,7 @@ export default function Dashboard() {
   async function setStatus(orderId, type, status) {
     try {
       await api('/api/orders', { method:'PATCH', body: JSON.stringify({orderId,type,status}) });
+      try { const _a = (type==='binnen'&&status==='done')?'ready':(type==='bez'&&status==='onderweg')?'in_transit':(type==='bez'&&status==='afgeleverd')?'delivered':null; if (_a) await api('/api/shopify/fulfillment', { method:'POST', body: JSON.stringify({ orderId, action:_a }) }); } catch(_e) { console.warn('Shopify sync faalde:', _e); }
       await loadOrders();
     } catch(e) { console.error(e); }
   }
